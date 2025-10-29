@@ -1,0 +1,49 @@
+name: Sync GitLab Vale Rules
+
+on:
+  schedule:
+    # Run daily at 2 AM UTC
+    - cron: '0 2 * * *'
+  workflow_dispatch: # Allow manual trigger
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Download latest Vale rules
+        run: |
+          chmod +x download_vale_rules.sh
+          ./download_vale_rules.sh
+
+      - name: Check for changes
+        id: check_changes
+        run: |
+          git add -A
+          if git diff --staged --quiet; then
+            echo "changes=false" >> $GITHUB_OUTPUT
+            echo "No changes detected"
+          else
+            echo "changes=true" >> $GITHUB_OUTPUT
+            echo "Changes detected"
+          fi
+
+      - name: Commit and push changes
+        if: steps.check_changes.outputs.changes == 'true'
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git commit -m "chore: sync Vale rules from GitLab ($(date +'%Y-%m-%d'))"
+          git push
+
+      - name: Report sync status
+        if: steps.check_changes.outputs.changes == 'true'
+        run: |
+          echo "✅ Vale rules synced successfully"
+          echo "📊 Files updated:"
+          git diff HEAD~1 --name-only

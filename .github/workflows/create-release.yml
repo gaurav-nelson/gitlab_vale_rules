@@ -1,0 +1,125 @@
+name: Create GitLab Vale Rules Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Release version (e.g., v1.0.0)'
+        required: true
+        type: string
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set version
+        id: version
+        run: |
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            VERSION="${{ inputs.version }}"
+          else
+            VERSION="${GITHUB_REF#refs/tags/}"
+          fi
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Release version: $VERSION"
+
+      - name: Verify required files exist
+        run: |
+          if [ ! -d "gitlab_base" ]; then
+            echo "Error: gitlab_base directory not found"
+            exit 1
+          fi
+          if [ ! -d "gitlab_docs" ]; then
+            echo "Error: gitlab_docs directory not found"
+            exit 1
+          fi
+          if [ ! -f ".vale.ini" ]; then
+            echo "Error: .vale.ini not found"
+            exit 1
+          fi
+
+      - name: Package release
+        run: |
+          chmod +x package_release.sh
+          ./package_release.sh
+
+      - name: Generate release notes
+        id: release_notes
+        run: |
+          cat > RELEASE_NOTES.md << 'EOF'
+          # GitLab Vale Rules ${{ steps.version.outputs.version }}
+
+          This release contains the GitLab documentation style rules for Vale, synced from the official GitLab repository.
+
+          ## What's Included
+
+          - **gitlab_base**: Core GitLab writing style rules
+          - **gitlab_docs**: GitLab documentation-specific rules
+          - **.vale.ini**: Pre-configured Vale configuration file
+
+          ## Installation
+
+          1. Download and extract `GitLab_Vale_Rules.zip`
+          2. Copy the contents to your project
+          3. Run Vale on your documentation:
+             ```bash
+             vale --config=GitLab_Vale_Rules/.vale.ini your-file.md
+             ```
+
+          ## File Statistics
+
+          - **gitlab_base**: $(ls -1 gitlab_base | wc -l | tr -d ' ') rule files
+          - **gitlab_docs**: $(ls -1 gitlab_docs | wc -l | tr -d ' ') rule files
+
+          ## Usage
+
+          ### Basic Usage
+          ```bash
+          vale --config=GitLab_Vale_Rules/.vale.ini docs/
+          ```
+
+          ### Custom Configuration
+          You can customize the `.vale.ini` file to adjust:
+          - Alert levels (error, warning, suggestion)
+          - Enabled/disabled rules
+          - File type associations
+
+          ## Source
+
+          These rules are automatically synced from:
+          - https://gitlab.com/gitlab-org/gitlab/-/tree/master/doc/.vale/gitlab_base
+          - https://gitlab.com/gitlab-org/gitlab/-/tree/master/doc/.vale/gitlab_docs
+
+          ---
+
+          **Release Date**: $(date +'%Y-%m-%d')
+          EOF
+
+          cat RELEASE_NOTES.md
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ steps.version.outputs.version }}
+          name: GitLab Vale Rules ${{ steps.version.outputs.version }}
+          body_path: RELEASE_NOTES.md
+          files: GitLab_Vale_Rules.zip
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Release Summary
+        run: |
+          echo "::notice::Release ${{ steps.version.outputs.version }} created successfully!"
+          echo "::notice::Download URL: https://github.com/${{ github.repository }}/releases/tag/${{ steps.version.outputs.version }}"
