@@ -9,6 +9,9 @@ on:
 jobs:
   sync:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
 
     steps:
       - name: Checkout repository
@@ -33,17 +36,26 @@ jobs:
             echo "Changes detected"
           fi
 
-      - name: Commit and push changes
+      - name: Create Pull Request
         if: steps.check_changes.outputs.changes == 'true'
-        run: |
-          git config --local user.email "github-actions[bot]@users.noreply.github.com"
-          git config --local user.name "github-actions[bot]"
-          git commit -m "chore: sync Vale rules from GitLab ($(date +'%Y-%m-%d'))"
-          git push
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "chore: sync Vale rules from GitLab ($(date +'%Y-%m-%d'))"
+          branch: sync-vale-rules-${{ github.run_number }}
+          delete-branch: true
+          title: "chore: sync Vale rules from GitLab"
+          body: |
+            Automated sync of Vale rules from the GitLab repository.
+
+            This PR was automatically created by the sync workflow.
+
+            **Run date:** ${{ github.run_id }}
+          labels: |
+            automation
+            dependencies
 
       - name: Report sync status
         if: steps.check_changes.outputs.changes == 'true'
         run: |
-          echo "✅ Vale rules synced successfully"
-          echo "📊 Files updated:"
-          git diff HEAD~1 --name-only
+          echo "✅ Pull request created for Vale rules sync"
