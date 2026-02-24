@@ -1,0 +1,18 @@
+GitLab Vale Rules - Notice
+
+This repository includes rule files and related material derived from, synchronized with,
+or adapted from the official GitLab source repository:
+https://gitlab.com/gitlab-org/gitlab
+
+GitLab and GitLab Inc. are trademarks of GitLab Inc.
+This repository is community-maintained and is not affiliated with, endorsed by,
+or officially connected to GitLab Inc.
+
+Redistribution notice:
+- Preserve this NOTICE file.
+- Preserve attribution to upstream source(s).
+- Preserve applicable upstream license notices and terms.
+
+License scope note:
+Upstream GitLab content uses multiple license scopes. For license mapping and canonical
+license-text references, see LICENSES.md in this repository.
