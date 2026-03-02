@@ -17,7 +17,7 @@ permissions:
 
 jobs:
   auto-merge:
-    if: ${{ github.event_name != 'pull_request_target' || github.event.pull_request.title == 'chore: sync Vale rules from GitLab' }}
+    if: "${{ github.event_name != 'pull_request_target' || github.event.pull_request.title == 'chore: sync Vale rules from GitLab' }}"
     runs-on: ubuntu-latest
 
     steps:

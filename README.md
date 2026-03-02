@@ -19,6 +19,17 @@ Where possible, source rules should be traceable to their upstream location in `
 - `download_vale_rules.sh` — Script to download or refresh Vale rules (documented below).
 - `package_release.sh` — Script to package or release rule sets (documented below).
 
+## Local workflow linting
+
+To lint GitHub Actions workflow files locally:
+
+1. Install `actionlint`:
+	- macOS (Homebrew): `brew install actionlint`
+2. Run the local lint script from the repository root:
+	- `bash lint_workflows.sh`
+
+This validates files in `.github/workflows` before you push changes.
+
 ## Licensing and attribution
 
 This repository contains derived/adapted material from the official `gitlab-org/gitlab` project.

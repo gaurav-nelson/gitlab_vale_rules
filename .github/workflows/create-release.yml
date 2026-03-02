@@ -22,7 +22,7 @@ permissions:
 
 jobs:
   release:
-    if: ${{ github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref_name == github.event.repository.default_branch && startsWith(github.event.head_commit.message, 'chore: sync Vale rules from GitLab')) }}
+    if: "${{ github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref_name == github.event.repository.default_branch && startsWith(github.event.head_commit.message, 'chore: sync Vale rules from GitLab')) }}"
     runs-on: ubuntu-latest
 
     steps:
@@ -50,7 +50,7 @@ jobs:
             fi
           fi
 
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
           echo "Release version: $VERSION"
 
       - name: Verify required files exist
@@ -153,7 +153,7 @@ jobs:
 
       - name: Create GitHub Release
         if: steps.release_guard.outputs.skip_release != 'true'
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ steps.version.outputs.version }}
           target_commitish: ${{ github.sha }}
