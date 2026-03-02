@@ -6,6 +6,10 @@ on:
     - cron: '0 2 * * *'
   workflow_dispatch: # Allow manual trigger
 
+concurrency:
+  group: sync-vale-rules
+  cancel-in-progress: true
+
 jobs:
   sync:
     runs-on: ubuntu-latest
@@ -41,8 +45,8 @@ jobs:
         uses: peter-evans/create-pull-request@v6
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: "chore: sync Vale rules from GitLab ($(date +'%Y-%m-%d'))"
-          branch: sync-vale-rules-${{ github.run_number }}
+          commit-message: "chore: sync Vale rules from GitLab"
+          branch: chore/sync-vale-rules
           delete-branch: true
           title: "chore: sync Vale rules from GitLab"
           body: |

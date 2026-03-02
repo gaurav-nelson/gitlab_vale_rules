@@ -1,0 +1,103 @@
+name: Auto-merge sync PRs
+
+on:
+  schedule:
+    - cron: '15 * * * *'
+  workflow_dispatch:
+  pull_request_target:
+    types: [opened, synchronize, reopened]
+
+concurrency:
+  group: auto-merge-sync-prs
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  auto-merge:
+    if: github.event_name != 'pull_request_target' || github.event.pull_request.title == 'chore: sync Vale rules from GitLab'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Merge eligible sync PRs
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const title = 'chore: sync Vale rules from GitLab';
+            const expectedBranch = 'chore/sync-vale-rules';
+            const botUsers = new Set(['github-actions[bot]', 'github-actions']);
+            const { owner, repo } = context.repo;
+
+            const prs = await github.paginate(github.rest.pulls.list, {
+              owner,
+              repo,
+              state: 'open',
+              sort: 'updated',
+              direction: 'desc',
+              per_page: 100,
+            });
+
+            const candidates = prs.filter((pr) => botUsers.has(pr.user.login) && pr.title === title && pr.head.ref === expectedBranch);
+
+            if (candidates.length === 0) {
+              core.info('No eligible sync PRs found.');
+              return;
+            }
+
+            core.info(`Found ${candidates.length} eligible sync PR(s).`);
+
+            const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+            for (const pr of candidates) {
+              let details;
+
+              const files = await github.paginate(github.rest.pulls.listFiles, {
+                owner,
+                repo,
+                pull_number: pr.number,
+                per_page: 100,
+              });
+
+              const hasUnexpectedFiles = files.some((file) => {
+                const path = file.filename;
+                return path !== '.vale.ini' && !path.startsWith('gitlab_base/') && !path.startsWith('gitlab_docs/');
+              });
+
+              if (hasUnexpectedFiles) {
+                core.warning(`PR #${pr.number}: contains files outside allowed sync scope, skipping.`);
+                continue;
+              }
+
+              for (let attempt = 1; attempt <= 3; attempt += 1) {
+                details = await github.rest.pulls.get({ owner, repo, pull_number: pr.number });
+                if (details.data.mergeable !== null) {
+                  break;
+                }
+                core.info(`PR #${pr.number}: mergeable is null, retry ${attempt}/3...`);
+                await sleep(3000);
+              }
+
+              const state = details.data.mergeable_state;
+              const mergeable = details.data.mergeable;
+
+              if (!mergeable || !['clean', 'unstable', 'has_hooks'].includes(state)) {
+                core.info(`PR #${pr.number}: not mergeable yet (mergeable=${mergeable}, state=${state}).`);
+                continue;
+              }
+
+              try {
+                await github.rest.pulls.merge({
+                  owner,
+                  repo,
+                  pull_number: pr.number,
+                  merge_method: 'squash',
+                  commit_title: title,
+                });
+                core.info(`Merged PR #${pr.number}.`);
+              } catch (error) {
+                core.warning(`Failed to merge PR #${pr.number}: ${error.message}`);
+              }
+            }
