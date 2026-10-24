@@ -11,6 +11,6 @@ level: warning
 nonword: true
 scope: raw
 tokens:
-  - ^- Offering:[^\n]*(SaaS|[Ss]elf-managed|dedicated|and|Dedicated,|, GitLab\.com)
+  - ^- Offering:[^\n]*(SaaS|[Ss]elf-managed|dedicated|and|Dedicated,(?! GitLab Dedicated for Government)|Government,|, GitLab\.com)
   - ^- Offering:[^\n]*(?<!GitLab )(Self-Managed|Dedicated)
   - ^(- )?\*+Offering(:\*+|\*+:)
