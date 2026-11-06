@@ -1,0 +1,14 @@
+---
+name: gitlab_base.Anthropomorphism
+description: |
+  Checks for anthropomorphic language that attributes human qualities such as
+  perception, intent, or awareness to software, systems, or data.
+extends: existence
+message: "Avoid anthropomorphism: '%s' attributes a human quality to a non-human subject. Replace the anthropomorphic verb with the system's input, rule, action, or observable result."
+ignorecase: true
+nonword: true
+vocab: false
+level: warning
+link: https://docs.gitlab.com/development/documentation/styleguide/#anthropomorphisms
+tokens:
+  - \b(tool|service|server|handler|pipeline|runner|agent|function|command|process|hook|module|library|class|request|response|query|rule|policy|validator|filter|parser|scheduler|worker|cache|registry|proxy|client|endpoint|API|CLI|app|application|platform|integration|engine|framework|container|node|cluster|instance|queue|stream|trigger|token|config|setting|flag|variable|parameter|field|attribute|model|payload|header|log|metric|component|database|repository|branch|commit|release|artifact|resource|file|URL|socket|interface|protocol|encoder|decoder|serializer|deserializer|router|dispatcher|listener|subscriber|publisher|producer|consumer|buffer|thread|timer|watcher|monitor|scanner|fetcher|importer|exporter|migrator|builder|generator|loader|installer|deployer|controller|manager|supervisor|collector|aggregator|reducer|merger|splitter|balancer|throttler|limiter|middleware|interceptor|decorator|wrapper|facade|adapter|bridge|singleton|strategy|observer|iterator|specification|transaction|batch|cursor|chain|libraries|queries|policies|registries|proxies|strategies|repositories)(s|es)?\s+(knows?|understands?|thinks?|believes?|decides?|wants?|sees?|looks? at|feels?|experiences?|perceives?|intends?|chooses?|prefers?|assumes?|guess(es)?|remembers?|learns?|tells?|asks?|wonders?|worr(y|ies)|cares?|likes|dislikes?|loves?|hates?|fears?|hopes?|wish(es)?|needs?|desires?)\b
