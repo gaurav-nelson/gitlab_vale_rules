@@ -4,7 +4,7 @@ description: |
   Avoid bold for simple emphasis.
 extends: existence
 message: "Avoid bold for simple emphasis."
-link: https://docs.gitlab.com/development/documentation/styleguide/#bold
+link: https://docs.gitlab.com/development/documentation/styleguide/text_and_formatting/#bold
 vocab: false
 level: error
 nonword: true

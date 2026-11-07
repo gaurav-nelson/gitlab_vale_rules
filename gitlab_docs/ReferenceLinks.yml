@@ -4,7 +4,7 @@ description: |
   Checks for reference-style links that should be converted to inline links.
 extends: existence
 message: "Put this link inline with the rest of the text."
-link: https://docs.gitlab.com/development/documentation/styleguide/#inline-links
+link: https://docs.gitlab.com/development/documentation/styleguide/links/#inline-links
 vocab: false
 level: error
 nonword: true

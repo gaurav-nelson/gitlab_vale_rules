@@ -4,7 +4,7 @@ description: |
   Makes sure Hugo shortcodes use standard syntax spacing.
 extends: existence
 message: "Make sure there's a space after the '{{<' and before the '>}}' in Hugo shortcodes. For example {{< Yes >}}, not {{<No>}}."
-link: https://docs.gitlab.com/development/documentation/styleguide/#gitlab-svg-icons
+link: https://docs.gitlab.com/development/documentation/styleguide/images_and_diagrams/#gitlab-svg-icons
 vocab: false
 ignorecase: true
 level: warning
