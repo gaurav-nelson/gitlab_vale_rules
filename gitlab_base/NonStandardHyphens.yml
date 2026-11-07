@@ -11,7 +11,7 @@ message: "Do not use non-standard dashes or hyphens. Use standard hyphen ('minus
 vocab: false
 nonword: true
 level: warning
-link: https://docs.gitlab.com/development/documentation/styleguide/#punctuation
+link: https://docs.gitlab.com/development/documentation/styleguide/text_and_formatting/#punctuation
 scope: text
 raw:
   - '[\u2010\u2011\u2013\u2014]'

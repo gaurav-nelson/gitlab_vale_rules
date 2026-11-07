@@ -4,7 +4,7 @@ description: |
   Makes sure alerts use Markdown alerts, not hugo shortcodes.
 extends: existence
 message: "Use markdown alert box syntax for notes, warnings, and feature flag or disclaimer notes."
-link: https://docs.gitlab.com/development/documentation/styleguide/#alert-boxes
+link: https://docs.gitlab.com/development/documentation/styleguide/shortcodes/#alert-boxes
 vocab: false
 ignorecase: true
 level: error

@@ -10,7 +10,7 @@ vocab: false
 level: error
 ignorecase: true
 nonword: true
-link: https://docs.gitlab.com/development/documentation/styleguide/#punctuation
+link: https://docs.gitlab.com/development/documentation/styleguide/text_and_formatting/#punctuation
 scope: raw
 tokens:
   - '^ *?[\u2013\u2014]'
