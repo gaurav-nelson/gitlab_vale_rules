@@ -61,6 +61,7 @@ autoloaded
 autoloader
 autoloading
 automatable
+automations
 autoscale
 autoscaled
 autoscaler
