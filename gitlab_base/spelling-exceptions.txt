@@ -209,6 +209,7 @@ Configs
 Consul
 containerd
 Contentful
+Corepack
 Corosync
 corpuses
 Cosign
