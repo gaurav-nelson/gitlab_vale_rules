@@ -10,4 +10,4 @@ vocab: false
 level: warning
 link: https://docs.gitlab.com/development/documentation/styleguide/language/#self-referential-writing
 tokens:
-  - This (page|guide) (builds|contains|covers|describes|documents|explains|guides|lists|offers|provides|shows)
+  - This (document|documentation|guide|page|section|topic) (builds|contains|covers|describes|details|discusses|documents|explains|guides|introduces|lists|offers|outlines|provides|shows|walks)
