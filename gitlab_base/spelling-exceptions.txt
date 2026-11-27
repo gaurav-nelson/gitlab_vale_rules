@@ -436,6 +436,7 @@ gitlabsos
 Gitleaks
 Gitpod
 Gitter
+Gitway
 glab
 GLab
 GLM
